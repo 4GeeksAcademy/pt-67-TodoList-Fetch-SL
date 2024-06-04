@@ -1,60 +1,55 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 //include images into your bundle
-import rigoImage from "../../img/rigo-baby.jpg";
+//import rigoImage from "../../img/rigo-baby.jpg";
+//import { name } from "file-loader";
 
 //create your first component
 const Home = () => {
-	const [tareas, setTasks] = useState(["Wash my hands", "Make homework"])
-	const [newTask, setNewTask] = useState("")
-	
-	
-	const handleTareaNueva = (event) => {
-		setNewTask(event.target.value)
-	}
+	const [users, setUsers] = useState([])
+	const [newUser, setNewUser] = useState("")
 
-	const handleSubmit = (event) => {
+
+	const access = async(event) => {
 		event.preventDefault()
-		setTasks([...tareas,newTask])
-		setNewTask("")
-	}
+		const response = await fetch(`https://playground.4geeks.com/todo/users/${name}`)
+		if(response.ok) {
+			const data = await response.json
+			setUsers(data.todos) }
 
-	const handleDelete = (positionToDelete) => {
-		const newArr = []
-		for (let i = 0; i < tareas.length; i++) {
-			if (i !== positionToDelete) {
-				newArr.push(tareas[i])
-			}
+	}
+	const createUser = async(event) => {
+		const userCreated = await fetch(`https://playground.4geeks.com/todo/users/${name}`,{
+		method : 'POST'})
+		if(userCreated.ok) {
+			const dataNewUser = await userCreated.json()
+			setNewUser([...users, dataNewUser])}
+	}  
+
+
+
+	useEffect(() => {
+		//codigo que se va a ejcutar ni bien se cargue mi plataforma
+		access()
+	}, [])
+
+	const handleKeyPress = (event) => {
+		if (event.key === 'Enter') {
 		}
-		setTasks(newArr)
-	}
-
+	};
 	return (
-	
-		<div className="w-50 m-auto mt-5">
-			<form onSubmit={handleSubmit}> 
-				<div className="mb-3 fs-4">
-					<label htmlhtmlFor="exampleInputEmail1" className="form-label">Add your task here:</label>
-					<input onChange={handleTareaNueva} type="text" className="form-control" id="newTask" value={newTask} aria-describedby="taskHelp"/>
-					<div id="taskHelp" className="form-text">You'll never forguet a task again.</div>
-				</div>
-				<button type="submit" className="btn btn-primary">Submit</button>
-			</form>
-			
-			
-			<ul className="w-50 m-auto">
-				{/* Utilizamos el método map para generar dinámicamente los elementos <li> */}
-				{tareas.map((item, index) => (
-				<li className="fs-4" key={index}>{item}
-					<button onClick={()=>handleDelete(index)} type="button" className="btn btn-danger btn-sm">X</button>
-				</li>
-				))}
-			</ul>
-			{tareas.length === 0 ? <span>No task, add a task</span> : <span>{tareas.length} tasks left</span>}
-		</div>
-		
+		<div className="container" >
+			{users.map((item, index) => <div key={index}>{item.name}</div>)}
 
-	);
+			<form onSubmit={createUser} className="d-flex p-4">
+				<div className="mb-3">
+					<label htmlFor="exampleInputEmail1" className="form-label fw-bold fs-5 ">Nombre de Usuario</label>
+					<input type="text" className="form-control" i aria-describedby="emailHelp"/>
+				</div>
+				<button type="submit" className="btn btn-primary mx-3">access</button>
+			</form>
+		</div>
+		);
 };
 
-export default Home;
+	export default Home;
